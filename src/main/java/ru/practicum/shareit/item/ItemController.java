@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private static final String OWNER = "X-Sharer-User-Id";
+    private static final String OWNER_ID_HEADER = "X-Sharer-User-Id";
     private ItemService itemService;
 
     @Autowired
@@ -34,27 +34,26 @@ public class ItemController {
 
     @ResponseBody
     @PostMapping
-    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER) Long ownerId) {
+    public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER_ID_HEADER) Long ownerId) {
         log.info("Received a POST-request to the endpoint: '/items' to add an item by the owner with ID = {}", ownerId);
         return itemService.create(itemDto, ownerId);
     }
 
     @ResponseBody
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
-                          @RequestHeader(OWNER) Long ownerId) {
+    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId, @RequestHeader(OWNER_ID_HEADER) Long ownerId) {
         log.info("Received a PATCH-request to the endpoint: '/items' to update item with ID = {}", itemId);
         return itemService.update(itemDto, ownerId, itemId);
     }
 
     @DeleteMapping("/{itemId}")
-    public ItemDto delete(@PathVariable Long itemId, @RequestHeader(OWNER) Long ownerId) {
+    public ItemDto delete(@PathVariable Long itemId, @RequestHeader(OWNER_ID_HEADER) Long ownerId) {
         log.info("Received a DELETE-request to the endpoint: '/items' to delete item with ID = {}", itemId);
         return itemService.delete(itemId, ownerId);
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByOwner(@RequestHeader(OWNER) Long ownerId) {
+    public List<ItemDto> getItemsByOwner(@RequestHeader(OWNER_ID_HEADER) Long ownerId) {
         log.info("Received a GET-request to the endpoint: '/items' to get all items of owner with ID = {}", ownerId);
         return itemService.getItemsByOwner(ownerId);
     }

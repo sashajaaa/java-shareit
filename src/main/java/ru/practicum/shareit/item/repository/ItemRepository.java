@@ -15,7 +15,7 @@ public interface ItemRepository {
 
     List<Item> getItemsBySearchQuery(String text);
 
-    void deleteItemsByOwner(Long ownerId);
-
     Item getItemById(Long itemId);
+
+    void deleteItemsByOwner(Long ownerId);
 }

@@ -3,14 +3,14 @@ package ru.practicum.shareit.item.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ItemNotFoundException;
-import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -37,9 +37,44 @@ public class ItemService {
         return newItemDto;
     }
 
+    public ItemDto update(ItemDto itemDto, Long ownerId, Long itemId) {
+        ItemDto newItemDto;
+        if (userService.getUserById(ownerId) == null) {
+            throw new NotFoundException("User with ID = " + ownerId + " not found.");
+        }
+        if (itemDto.getId() == null) {
+            itemDto.setId(itemId);
+        }
+        Item oldItem = itemRepository.getItemById(itemId);
+        if (!oldItem.getOwnerId().equals(ownerId)) {
+            throw new NotFoundException("User have no such item.");
+        }
+        newItemDto = mapper.toItemDto(itemRepository.update(mapper.toItem(itemDto, ownerId)));
+        return newItemDto;
+    }
+
+    public ItemDto delete(Long itemId, Long ownerId) {
+        Item item = itemRepository.getItemById(itemId);
+        if (!item.getOwnerId().equals(ownerId)) {
+            throw new NotFoundException("User have no such item.");
+        }
+        return mapper.toItemDto(itemRepository.delete(itemId));
+    }
+
     public List<ItemDto> getItemsByOwner(Long ownerId) {
         return itemRepository
                 .getItemsByOwner(ownerId)
+                .stream()
+                .map(mapper::toItemDto)
+                .collect(toList());
+    }
+
+    public List<ItemDto> getItemsBySearchQuery(String text) {
+        if (text == null || text.isBlank()) {
+            return Collections.emptyList();
+        }
+        text = text.toLowerCase();
+        return itemRepository.getItemsBySearchQuery(text)
                 .stream()
                 .map(mapper::toItemDto)
                 .collect(toList());
@@ -49,40 +84,7 @@ public class ItemService {
         return mapper.toItemDto(itemRepository.getItemById(itemId));
     }
 
-    public ItemDto update(ItemDto itemDto, Long ownerId, Long itemId) {
-        ItemDto newItemDto;
-        if (userService.getUserById(ownerId) == null) {
-            throw new UserNotFoundException("User with ID = " + ownerId + " not found.");
-        }
-            if (itemDto.getId() == null) {
-            itemDto.setId(itemId);
-        }
-        Item oldItem = itemRepository.getItemById(itemId);
-        if (!oldItem.getOwnerId().equals(ownerId)) {
-            throw new ItemNotFoundException("User have no such item.");
-        }
-            newItemDto = mapper.toItemDto(itemRepository.update(mapper.toItem(itemDto, ownerId)));
-        return newItemDto;
-        }
-
-    public ItemDto delete(Long itemId, Long ownerId) {
-        Item item = itemRepository.getItemById(itemId);
-        if (!item.getOwnerId().equals(ownerId)) {
-            throw new ItemNotFoundException("User have no such item.");
-        }
-        return mapper.toItemDto(itemRepository.delete(itemId));
-    }
-
     public void deleteItemsByOwner(Long ownerId) {
         itemRepository.deleteItemsByOwner(ownerId);
-    }
-
-    public List<ItemDto> getItemsBySearchQuery(String text) {
-        text = text.toLowerCase();
-        return itemRepository
-                .getItemsBySearchQuery(text)
-                .stream()
-                .map(mapper::toItemDto)
-                .collect(toList());
     }
 }

@@ -14,4 +14,8 @@ public interface UserRepository {
     List<User> getUsers();
 
     User getUserById(Long userId);
+
+    boolean isExistUserInDb(Long id);
+
+    Long getUserIdByEmail(String email);
 }

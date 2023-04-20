@@ -8,23 +8,23 @@ import ru.practicum.shareit.item.model.Item;
 public class ItemMapper {
 
     public ItemDto toItemDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequestId() != null ? item.getRequestId() : null
-        );
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .requestId(item.getRequestId() != null ? item.getRequestId() : null)
+                .build();
     }
 
     public Item toItem(ItemDto itemDto, Long ownerId) {
-        return new Item(
-                itemDto.getId(),
-                itemDto.getName(),
-                itemDto.getDescription(),
-                itemDto.getAvailable(),
-                ownerId,
-                itemDto.getRequestId() != null ? itemDto.getRequestId() : null
-        );
+        return Item.builder()
+                .id(itemDto.getId())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .ownerId(ownerId)
+                .requestId(itemDto.getRequestId() != null ? itemDto.getRequestId() : null)
+                .build();
     }
 }

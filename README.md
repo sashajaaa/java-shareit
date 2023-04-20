@@ -138,3 +138,26 @@ feat:
 -Создан пакет user, содержащий файлы классов UserDto, UserMapper, User, UserRepositoryImpl и файл интерфейса UserRepository;  
 -Создан пакет exception, содержащий файлы классов ItemNotFoundException, UserAlreadyExistsException, UserNotFoundException и ValidationException;  
 -Создан пакет handler, содержащий файл класса ErrorHandler.  
+
+#### Commit №13.1:  
+refactor:  
+-исключения UserNotFoundException и ItemNotFoundException объеденины в одно;  
+-переработан класс BookingDto;  
+-переработан класс BookingMapper;  
+-переработан класс ErrorHandler;  
+-переработан класс ItemDto;  
+-переработан класс ItemMapper;  
+-переработан класс Item;  
+-переработан интерфейс ItemRepository;  
+-переработан класс ItemRepositoryImpl;  
+-переработан класс ItemService;  
+-переработан класс ItemController;  
+-переработан класс ItemRequestDto;  
+-переработан класс ItemRequestMapper;  
+-переработан класс ItemRequest;  
+-переработан класс UserDto;  
+-переработан класс UserMapper;  
+-переработан класс User;  
+-переработан интерфейс UserRepository;  
+-переработан класс UserRepositoryImpl;  
+-переработан класс UserService.  
