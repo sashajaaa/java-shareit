@@ -13,7 +13,7 @@ import java.util.Map;
 @Qualifier("UserRepositoryImpl")
 public class UserRepositoryImpl implements UserRepository {
 
-    public Map<Long, User> users;
+    private Map<Long, User> users;
     private Long currentId;
 
     public UserRepositoryImpl() {
@@ -30,12 +30,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User update(User user) {
-        if (user.getName() == null) {
-            user.setName(users.get(user.getId()).getName());
-        }
-        if (user.getEmail() == null) {
-            user.setEmail(users.get(user.getId()).getEmail());
-        }
         users.put(user.getId(), user);
         return user;
     }

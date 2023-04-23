@@ -139,7 +139,7 @@ feat:
 -Создан пакет exception, содержащий файлы классов ItemNotFoundException, UserAlreadyExistsException, UserNotFoundException и ValidationException;  
 -Создан пакет handler, содержащий файл класса ErrorHandler.  
 
-#### Commit №13.1:  
+#### Commit №13.2:  
 refactor:  
 -исключения UserNotFoundException и ItemNotFoundException объеденины в одно;  
 -переработан класс BookingDto;  
@@ -159,5 +159,13 @@ refactor:
 -переработан класс UserMapper;  
 -переработан класс User;  
 -переработан интерфейс UserRepository;  
+-переработан класс UserRepositoryImpl;  
+-переработан класс UserService.  
+
+#### Commit №13.3:
+refactor:
+-переработан класс AlreadyExistsException;  
+-переработан класс ItemRepositoryImpl;  
+-переработан класс ItemService;  
 -переработан класс UserRepositoryImpl;  
 -переработан класс UserService.  

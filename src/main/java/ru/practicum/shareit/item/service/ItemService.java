@@ -38,7 +38,15 @@ public class ItemService {
     }
 
     public ItemDto update(ItemDto itemDto, Long ownerId, Long itemId) {
-        ItemDto newItemDto;
+        if (itemDto.getName() == null) {
+            itemDto.setName(itemRepository.getItemById(itemId).getName());
+        }
+        if (itemDto.getDescription() == null) {
+            itemDto.setDescription(itemRepository.getItemById(itemId).getDescription());
+        }
+        if (itemDto.getAvailable() == null) {
+            itemDto.setAvailable(itemRepository.getItemById(itemId).getAvailable());
+        }
         if (userService.getUserById(ownerId) == null) {
             throw new NotFoundException("User with ID = " + ownerId + " not found.");
         }
@@ -49,8 +57,7 @@ public class ItemService {
         if (!oldItem.getOwnerId().equals(ownerId)) {
             throw new NotFoundException("User have no such item.");
         }
-        newItemDto = mapper.toItemDto(itemRepository.update(mapper.toItem(itemDto, ownerId)));
-        return newItemDto;
+        return mapper.toItemDto(itemRepository.update(mapper.toItem(itemDto, ownerId)));
     }
 
     public ItemDto delete(Long itemId, Long ownerId) {

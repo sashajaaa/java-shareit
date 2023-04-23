@@ -43,6 +43,12 @@ public class UserService {
 
     public UserDto update(UserDto userDto, Long id) {
         userDto.setId(id);
+        if (userDto.getName() == null) {
+            userDto.setName(userRepository.getUserById(id).getName());
+        }
+        if (userDto.getEmail() == null) {
+            userDto.setEmail(userRepository.getUserById(id).getEmail());
+        }
         User user = mapper.toUser(userDto);
         if (userRepository.getUserById(user.getId()) == null) {
             throw new NotFoundException("User with ID = " + user.getId() + " not found.");

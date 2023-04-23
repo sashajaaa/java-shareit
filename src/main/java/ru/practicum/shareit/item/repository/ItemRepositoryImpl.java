@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,15 +33,6 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item update(Item item) {
-        if (item.getName() == null) {
-            item.setName(items.get(item.getId()).getName());
-        }
-        if (item.getDescription() == null) {
-            item.setDescription(items.get(item.getId()).getDescription());
-        }
-        if (item.getAvailable() == null) {
-            item.setAvailable(items.get(item.getId()).getAvailable());
-        }
         items.put(item.getId(), item);
         return item;
     }
@@ -76,14 +68,10 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public void deleteItemsByOwner(Long ownerId) {
-        List<Long> deleteIds = new ArrayList<>(items
-                .values()
+        items.values()
                 .stream()
                 .filter(item -> item.getOwnerId().equals(ownerId))
                 .map(Item::getId)
-                .collect(toList()));
-        for (Long deleteId : deleteIds) {
-            items.remove(deleteId);
-        }
+                .forEach(id -> items.remove(id));
     }
 }
