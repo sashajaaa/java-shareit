@@ -42,9 +42,9 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@RequestBody UserDto userDto, @PathVariable long userId) {
+    public UserDto save(@RequestBody UserDto userDto, @PathVariable long userId) {
         log.info("Received a PATCH-request to the endpoint: '/users' to update user with ID = {}", userId);
-        return userService.update(userDto, userId);
+        return userService.save(userDto, userId);
     }
 
     @DeleteMapping("/{userId}")

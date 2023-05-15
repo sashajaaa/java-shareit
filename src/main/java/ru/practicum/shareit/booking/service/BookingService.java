@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.OutputBookingDto;
@@ -104,7 +105,7 @@ public class BookingService {
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "ALL":
-                return BookingMapper.toBookingDto(bookingRepository.findAllBookingsOwner(ownerId));
+                return BookingMapper.toBookingDto(bookingRepository.findByOwnerId(ownerId));
             case "CURRENT":
                 return BookingMapper.toBookingDto(bookingRepository.findAllCurrentBookingsOwner(ownerId, now));
             case "PAST":
@@ -134,10 +135,10 @@ public class BookingService {
         }
         if (approve) {
             booking.setStatus(BookingStatus.APPROVED);
-            bookingRepository.update(BookingStatus.APPROVED, bookingId);
+            bookingRepository.save(BookingStatus.APPROVED, bookingId);
         } else {
             booking.setStatus(BookingStatus.REJECTED);
-            bookingRepository.update(BookingStatus.REJECTED, bookingId);
+            bookingRepository.save(BookingStatus.REJECTED, bookingId);
         }
         return booking;
     }

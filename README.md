@@ -311,4 +311,21 @@ feat:
 -Добавлена реализация аренды (Booking).
 
 refactor:  
--Полный рефактор приложения.
+-Полный рефактор приложения.  
+
+#### Commit №14.2:
+refactor:
+-переработан файл pom.xml;  
+-переработан файл application.properties;  
+-переработан класс BookingController;  
+-переработан класс BookingMapper;  
+-переработан интерфейс BookingRepository;  
+-переработан класс BookingService;  
+-переработан класс CommentMapper;  
+-переработан класс ItemController;  
+-переработан класс ItemMapper;  
+-переработан класс Item;  
+-переработан класс ItemService;  
+-переработан класс UserController;  
+-переработан класс UserMapper;  
+-переработан класс UserService.  

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("UPDATE Booking b "
             + "SET b.status = :status  "
             + "WHERE b.id = :bookingId")
-    void update(BookingStatus status, Long bookingId);
+    void save(BookingStatus status, Long bookingId);
 
     List<Booking> findAllByBookerIdOrderByStartDesc(long id);
 
@@ -39,7 +40,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.ownerId = :ownerId "
             + "ORDER BY b.start DESC")
-    List<Booking> findAllBookingsOwner(Long ownerId);
+    List<Booking> findByOwnerId(Long ownerId);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "

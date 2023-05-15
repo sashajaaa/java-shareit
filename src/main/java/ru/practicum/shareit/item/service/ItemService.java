@@ -25,6 +25,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -67,14 +68,16 @@ public class ItemService {
         List<ItemDto> item = itemRepository.findAllByOwnerId(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
-        return item.stream()
-                .map(this::updateBookings)
-                .peek((i) -> CommentMapper.toDtoList(commentRepository.findAllByItemId(i.getId())))
-                .collect(Collectors.toList());
+        List<ItemDto> list = new ArrayList<>();
+        item.stream().map(this::updateBookings).forEach(i -> {
+            CommentMapper.toDtoList(commentRepository.findAllByItemId(i.getId()));
+            list.add(i);
+        });
+        return list;
     }
 
     @Transactional
-    public ItemDto update(ItemDto itemDto, Long itemId, Long userId) {
+    public ItemDto save(ItemDto itemDto, Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(String.format("Item with ID = %d not found.", itemId)));
         userService.findUserById(userId);
@@ -121,7 +124,7 @@ public class ItemService {
     @Transactional
     public List<ItemDto> search(String text) {
         if (text == null || text.isBlank()) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return itemRepository.searchAvailableItems(text).stream()
                 .map(ItemMapper::toItemDto)

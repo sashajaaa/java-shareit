@@ -54,9 +54,9 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public OutputBookingDto update(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                   @PathVariable Long bookingId,
-                                   @RequestParam Boolean approved) {
+    public OutputBookingDto save(@RequestHeader(OWNER_ID_HEADER) Long userId,
+                                 @PathVariable Long bookingId,
+                                 @RequestParam Boolean approved) {
         log.info("Received a PATCH-request to the endpoint: '/bookings' to update booking with ID = {}", bookingId);
         return bookingService.approve(bookingId, userId, approved);
     }

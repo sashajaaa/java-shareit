@@ -47,10 +47,10 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader(OWNER_ID_HEADER) Long userId, @PathVariable long itemId,
-                          @RequestBody ItemDto itemDto) {
+    public ItemDto save(@RequestHeader(OWNER_ID_HEADER) Long userId, @PathVariable long itemId,
+                        @RequestBody ItemDto itemDto) {
         log.info("Received a PATCH-request to the endpoint: '/items' to update item with ID = {}", itemId);
-        return itemService.update(itemDto, itemId, userId);
+        return itemService.save(itemDto, itemId, userId);
     }
 
     @DeleteMapping("/{itemId}")
