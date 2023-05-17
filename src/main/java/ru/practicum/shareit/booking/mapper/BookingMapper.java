@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.OutputBookingDto;
 import ru.practicum.shareit.booking.dto.ShortItemBookingDto;
@@ -11,25 +12,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 public class BookingMapper {
-    public static OutputBookingDto toBookingDto(Booking booking) {
+    private final ItemMapper itemMapper;
+    private final UserMapper userMapper;
+
+    public OutputBookingDto toBookingDto(Booking booking) {
         return OutputBookingDto.builder()
                 .id(booking.getId())
-                .booker(UserMapper.toUserDto(booking.getBooker()))
+                .booker(userMapper.toUserDto(booking.getBooker()))
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(ItemMapper.toItemDto(booking.getItem()))
+                .item(itemMapper.toItemDto(booking.getItem()))
                 .status(booking.getStatus())
                 .build();
     }
 
-    public static List<OutputBookingDto> toBookingDto(List<Booking> bookings) {
+    public List<OutputBookingDto> toBookingDto(List<Booking> bookings) {
         return bookings.stream()
-                .map(BookingMapper::toBookingDto)
+                .map(this::toBookingDto)
                 .collect(Collectors.toList());
     }
 
-    public static ShortItemBookingDto toItemBookingDto(Booking booking) {
+    public ShortItemBookingDto toItemBookingDto(Booking booking) {
         return ShortItemBookingDto.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())

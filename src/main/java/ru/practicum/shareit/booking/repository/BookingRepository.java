@@ -19,71 +19,71 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             + "WHERE b.id = :bookingId")
     void save(BookingStatus status, Long bookingId);
 
-    List<Booking> findAllByBookerIdOrderByStartDesc(long id);
+    List<Booking> findByBookerIdOrderByStartDesc(long id);
 
-    List<Booking> findAllByBookerIdAndStatusIsOrderByStartDesc(Long id, BookingStatus status);
+    List<Booking> findByBookerIdAndStatusIsOrderByStartDesc(Long id, BookingStatus status);
 
-    List<Booking> findAllByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(Long id,
-                                                                                 LocalDateTime end,
-                                                                                 LocalDateTime start);
+    List<Booking> findByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(Long id,
+                                                                              LocalDateTime end,
+                                                                              LocalDateTime start);
 
-    List<Booking> findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Long id, LocalDateTime time);
+    List<Booking> findByBookerIdAndEndIsBeforeOrderByStartDesc(Long id, LocalDateTime time);
 
-    List<Booking> findAllByBookerIdAndStartIsAfterOrderByStartDesc(Long id, LocalDateTime time);
+    List<Booking> findByBookerIdAndStartIsAfterOrderByStartDesc(Long id, LocalDateTime time);
 
-    List<Booking> findAllByBookerIdAndStartIsAfterAndStatusIsOrderByStartDesc(Long bookerId,
-                                                                              LocalDateTime start,
-                                                                              BookingStatus status);
+    List<Booking> findByBookerIdAndStartIsAfterAndStatusIsOrderByStartDesc(Long bookerId,
+                                                                           LocalDateTime start,
+                                                                           BookingStatus status);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.ownerId = :ownerId "
             + "ORDER BY b.start DESC")
-    List<Booking> findByOwnerId(Long ownerId);
+    List<Booking> findByItemOwnerId(Long ownerId);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.ownerId = :ownerId "
             + "AND :time between b.start AND b.end "
             + "ORDER BY b.start DESC")
-    List<Booking> findAllCurrentBookingsOwner(Long ownerId, LocalDateTime time);
+    List<Booking> findCurrentBookingsOwner(Long ownerId, LocalDateTime time);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.ownerId = :ownerId "
             + "AND b.end < :time "
             + "ORDER BY b.start DESC")
-    List<Booking> findAllPastBookingsOwner(Long ownerId, LocalDateTime time);
+    List<Booking> findPastBookingsOwner(Long ownerId, LocalDateTime time);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.ownerId = :ownerId "
             + "AND b.start > :time "
             + "ORDER BY b.start DESC")
-    List<Booking> findAllFutureBookingsOwner(Long ownerId, LocalDateTime time);
+    List<Booking> findFutureBookingsOwner(Long ownerId, LocalDateTime time);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.ownerId = :ownerId "
             + "AND b.start > :time AND b.status = :status "
             + "ORDER BY b.start DESC")
-    List<Booking> findAllWaitingBookingsOwner(Long ownerId, LocalDateTime time, BookingStatus status);
+    List<Booking> findWaitingBookingsOwner(Long ownerId, LocalDateTime time, BookingStatus status);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.ownerId = :ownerId "
             + "AND b.status = :status "
             + "ORDER BY b.start DESC")
-    List<Booking> findAllRejectedBookingsOwner(Long ownerId, BookingStatus status);
+    List<Booking> findRejectedBookingsOwner(Long ownerId, BookingStatus status);
 
     @Query("SELECT b FROM Booking b "
             + "INNER JOIN Item i ON b.item.id = i.id "
             + "WHERE i.id = :itemId "
             + "ORDER BY b.start DESC")
-    List<Booking> findAllBookingsItem(Long itemId);
+    List<Booking> findBookingsItem(Long itemId);
 
-    List<Booking> findAllByItemIdAndBookerIdAndStatusIsAndEndIsBefore(Long itemId,
-                                                                      Long bookerId,
-                                                                      BookingStatus status,
-                                                                      LocalDateTime time);
+    List<Booking> findByItemIdAndBookerIdAndStatusIsAndEndIsBefore(Long itemId,
+                                                                   Long bookerId,
+                                                                   BookingStatus status,
+                                                                   LocalDateTime time);
 }

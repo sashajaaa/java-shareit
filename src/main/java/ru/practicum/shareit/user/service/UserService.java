@@ -12,42 +12,40 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.user.mapper.UserMapper.toUser;
-import static ru.practicum.shareit.user.mapper.UserMapper.toUserDto;
-
 @Service
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Transactional
     public UserDto create(UserDto userDto) {
-        return toUserDto(userRepository.save(toUser(userDto)));
+        return userMapper.toUserDto(userRepository.save(userMapper.toUser(userDto)));
     }
 
     @Transactional
     public UserDto findUserById(Long userId) {
-        return toUserDto(userRepository.findById(userId)
+        return userMapper.toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("User with ID = %d not found.", userId))));
     }
 
     @Transactional
     public List<UserDto> findAllUsers() {
         return userRepository.findAll().stream()
-                .map(UserMapper::toUserDto)
+                .map(userMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public UserDto save(UserDto userDto, Long userId) {
-        User user = toUser(findUserById(userId));
+        User user = userMapper.toUser(findUserById(userId));
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
         }
-        return toUserDto(userRepository.save(user));
+        return userMapper.toUserDto(userRepository.save(user));
     }
 
     @Transactional

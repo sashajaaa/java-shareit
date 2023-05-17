@@ -329,3 +329,14 @@ refactor:
 -переработан класс UserController;  
 -переработан класс UserMapper;  
 -переработан класс UserService.  
+
+#### Commit №14.3:
+refactor:  
+-переработан класс BookingMapper;  
+-переработан интерфейс BookingRepository;  
+-переработан класс BookingService;  
+-переработан класс CommentMapper;  
+-переработан класс ItemMapper;  
+-переработан класс ItemService;  
+-переработан класс UserMapper;  
+-переработан класс UserService.  
