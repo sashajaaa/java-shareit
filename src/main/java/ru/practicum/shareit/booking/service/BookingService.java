@@ -31,6 +31,9 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemService itemService;
+    private final ItemMapper itemMapper;
+    private final UserMapper userMapper;
+    private final BookingMapper bookingMapper;
 
     @Transactional
     public OutputBookingDto create(InputBookingDto bookingDtoShort, long bookerId) {
@@ -40,8 +43,8 @@ public class BookingService {
                     .format("Invalid booking time start = %s  end = %s",
                             bookingDtoShort.getStart(), bookingDtoShort.getEnd()));
         }
-        User booker = UserMapper.toUser(userService.findUserById(bookerId));
-        Item item = ItemMapper.toItem(itemService.findItemById(bookingDtoShort.getItemId(), bookerId));
+        User booker = userMapper.toUser(userService.findUserById(bookerId));
+        Item item = itemMapper.toItem(itemService.findItemById(bookingDtoShort.getItemId(), bookerId));
         if (itemService.findOwnerId(item.getId()) == bookerId) {
             throw new OperationAccessException("The owner cannot be a booker.");
         }
@@ -53,7 +56,7 @@ public class BookingService {
                     .booker(booker)
                     .status(BookingStatus.WAITING)
                     .build();
-            return BookingMapper.toBookingDto(bookingRepository.save(booking));
+            return bookingMapper.toBookingDto(bookingRepository.save(booking));
         } else {
             throw new NotAvailableException("Item with ID = %d is not available.");
         }
@@ -64,7 +67,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException(String.format("Booking with ID = %d not found.", bookingId)));
         if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwnerId().equals(userId)) {
-            return BookingMapper.toBookingDto(booking);
+            return bookingMapper.toBookingDto(booking);
         } else {
             throw new OperationAccessException(String.format("User with ID = %d is not the owner, no access to booking.", userId));
         }
@@ -76,23 +79,23 @@ public class BookingService {
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "ALL":
-                return BookingMapper.toBookingDto(bookingRepository.findAllByBookerIdOrderByStartDesc(userId));
+                return bookingMapper.toBookingDto(bookingRepository.findByBookerIdOrderByStartDesc(userId));
             case "CURRENT":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(userId, now, now));
+                return bookingMapper.toBookingDto(bookingRepository
+                        .findByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(userId, now, now));
             case "PAST":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdAndEndIsBeforeOrderByStartDesc(userId, now));
+                return bookingMapper.toBookingDto(bookingRepository
+                        .findByBookerIdAndEndIsBeforeOrderByStartDesc(userId, now));
             case "FUTURE":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdAndStartIsAfterOrderByStartDesc(userId, now));
+                return bookingMapper.toBookingDto(bookingRepository
+                        .findByBookerIdAndStartIsAfterOrderByStartDesc(userId, now));
             case "WAITING":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdAndStartIsAfterAndStatusIsOrderByStartDesc(userId, now,
+                return bookingMapper.toBookingDto(bookingRepository
+                        .findByBookerIdAndStartIsAfterAndStatusIsOrderByStartDesc(userId, now,
                                 BookingStatus.WAITING));
             case "REJECTED":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdAndStatusIsOrderByStartDesc(userId, BookingStatus.REJECTED));
+                return bookingMapper.toBookingDto(bookingRepository
+                        .findByBookerIdAndStatusIsOrderByStartDesc(userId, BookingStatus.REJECTED));
 
         }
         throw new BadRequestException(String.format("Unknown state: %s", state));
@@ -104,19 +107,19 @@ public class BookingService {
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "ALL":
-                return BookingMapper.toBookingDto(bookingRepository.findByOwnerId(ownerId));
+                return bookingMapper.toBookingDto(bookingRepository.findByItemOwnerId(ownerId));
             case "CURRENT":
-                return BookingMapper.toBookingDto(bookingRepository.findAllCurrentBookingsOwner(ownerId, now));
+                return bookingMapper.toBookingDto(bookingRepository.findCurrentBookingsOwner(ownerId, now));
             case "PAST":
-                return BookingMapper.toBookingDto(bookingRepository.findAllPastBookingsOwner(ownerId, now));
+                return bookingMapper.toBookingDto(bookingRepository.findPastBookingsOwner(ownerId, now));
             case "FUTURE":
-                return BookingMapper.toBookingDto(bookingRepository.findAllFutureBookingsOwner(ownerId, now));
+                return bookingMapper.toBookingDto(bookingRepository.findFutureBookingsOwner(ownerId, now));
             case "WAITING":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findAllWaitingBookingsOwner(ownerId, now, BookingStatus.WAITING));
+                return bookingMapper.toBookingDto(bookingRepository
+                        .findWaitingBookingsOwner(ownerId, now, BookingStatus.WAITING));
             case "REJECTED":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findAllRejectedBookingsOwner(ownerId, BookingStatus.REJECTED));
+                return bookingMapper.toBookingDto(bookingRepository
+                        .findRejectedBookingsOwner(ownerId, BookingStatus.REJECTED));
         }
         throw new BadRequestException(String.format("Unknown state: %s", state));
     }

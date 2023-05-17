@@ -40,13 +40,17 @@ public class ItemService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final CommentRepository commentRepository;
+    private final ItemMapper itemMapper;
+    private final UserMapper userMapper;
+    private final BookingMapper bookingMapper;
+    private final CommentMapper commentMapper;
 
     @Transactional
     public ItemDto create(Long userId, ItemDto itemDto) {
         userService.findUserById(userId);
-        Item item = ItemMapper.toItem(itemDto);
+        Item item = itemMapper.toItem(itemDto);
         item.setOwnerId(userId);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Transactional
@@ -54,23 +58,23 @@ public class ItemService {
         ItemDto result;
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(String.format("Item with ID = %d not found.", itemId)));
-        result = ItemMapper.toItemDto(item);
+        result = itemMapper.toItemDto(item);
         if (Objects.equals(item.getOwnerId(), userId)) {
             updateBookings(result);
         }
         List<Comment> comments = commentRepository.findAllByItemId(result.getId());
-        result.setComments(CommentMapper.toDtoList(comments));
+        result.setComments(commentMapper.toDtoList(comments));
         return result;
     }
 
     @Transactional
     public List<ItemDto> findAllUsersItems(Long userId) {
         List<ItemDto> item = itemRepository.findAllByOwnerId(userId).stream()
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
         List<ItemDto> list = new ArrayList<>();
         item.stream().map(this::updateBookings).forEach(i -> {
-            CommentMapper.toDtoList(commentRepository.findAllByItemId(i.getId()));
+            commentMapper.toDtoList(commentRepository.findAllByItemId(i.getId()));
             list.add(i);
         });
         return list;
@@ -93,12 +97,12 @@ public class ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     public ItemDto updateBookings(ItemDto itemDto) {
         LocalDateTime now = LocalDateTime.now();
-        List<Booking> bookings = bookingRepository.findAllBookingsItem(itemDto.getId());
+        List<Booking> bookings = bookingRepository.findBookingsItem(itemDto.getId());
         Booking lastBooking = bookings.stream()
                 .filter(obj -> !(obj.getStatus().equals(BookingStatus.REJECTED)))
                 .filter(obj -> obj.getStart().isBefore(now))
@@ -108,10 +112,10 @@ public class ItemService {
                 .filter(obj -> obj.getStart().isAfter(now))
                 .min(Comparator.comparing(Booking::getStart)).orElse(null);
         if (lastBooking != null) {
-            itemDto.setLastBooking(BookingMapper.toItemBookingDto(lastBooking));
+            itemDto.setLastBooking(bookingMapper.toItemBookingDto(lastBooking));
         }
         if (nextBooking != null) {
-            itemDto.setNextBooking(BookingMapper.toItemBookingDto(nextBooking));
+            itemDto.setNextBooking(bookingMapper.toItemBookingDto(nextBooking));
         }
         return itemDto;
     }
@@ -127,7 +131,7 @@ public class ItemService {
             return Collections.emptyList();
         }
         return itemRepository.searchAvailableItems(text).stream()
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -142,16 +146,16 @@ public class ItemService {
     public CommentDto addComment(Long itemId, Long userId, CommentDto commentDto) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(String.format("Item with ID = %d not found.", itemId)));
-        User user = UserMapper.toUser(userService.findUserById(userId));
+        User user = userMapper.toUser(userService.findUserById(userId));
         List<Booking> bookings = bookingRepository
-                .findAllByItemIdAndBookerIdAndStatusIsAndEndIsBefore(itemId, userId, BookingStatus.APPROVED, LocalDateTime.now());
+                .findByItemIdAndBookerIdAndStatusIsAndEndIsBefore(itemId, userId, BookingStatus.APPROVED, LocalDateTime.now());
         log.info(bookings.toString());
         if (!bookings.isEmpty() && bookings.get(0).getStart().isBefore(LocalDateTime.now())) {
-            Comment comment = CommentMapper.toComment(commentDto);
+            Comment comment = commentMapper.toComment(commentDto);
             comment.setItem(item);
             comment.setAuthor(user);
             comment.setCreated(LocalDateTime.now());
-            return CommentMapper.toDto(commentRepository.save(comment));
+            return commentMapper.toDto(commentRepository.save(comment));
         } else {
             throw new NotAvailableException(String.format("Booking for user with ID = %d and item with ID = %d not found.", userId, itemId));
         }
