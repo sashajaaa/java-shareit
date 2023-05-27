@@ -14,27 +14,25 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class BookingMapper {
-    private final ItemMapper itemMapper;
-    private final UserMapper userMapper;
 
-    public OutputBookingDto toBookingDto(Booking booking) {
+    public static OutputBookingDto toBookingDto(Booking booking) {
         return OutputBookingDto.builder()
                 .id(booking.getId())
-                .booker(userMapper.toUserDto(booking.getBooker()))
+                .booker(UserMapper.toUserDto(booking.getBooker()))
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(itemMapper.toItemDto(booking.getItem()))
+                .item(ItemMapper.toItemDto(booking.getItem()))
                 .status(booking.getStatus())
                 .build();
     }
 
-    public List<OutputBookingDto> toBookingDto(List<Booking> bookings) {
+    public static List<OutputBookingDto> toBookingDto(List<Booking> bookings) {
         return bookings.stream()
-                .map(this::toBookingDto)
+                .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
-    public ShortItemBookingDto toItemBookingDto(Booking booking) {
+    public static ShortItemBookingDto toItemBookingDto(Booking booking) {
         return ShortItemBookingDto.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())

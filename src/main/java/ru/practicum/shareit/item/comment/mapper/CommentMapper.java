@@ -12,19 +12,18 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class CommentMapper {
-    private final ItemMapper itemMapper;
 
-    public CommentDto toDto(Comment comment) {
+    public static CommentDto toDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
-                .item(itemMapper.toItemDto(comment.getItem()))
+                .item(ItemMapper.toItemDto(comment.getItem()))
                 .authorName(comment.getAuthor().getName())
                 .created(comment.getCreated())
                 .build();
     }
 
-    public Comment toComment(CommentDto commentDto) {
+    public static Comment toComment(CommentDto commentDto) {
         return Comment.builder()
                 .id(commentDto.getId())
                 .text(commentDto.getText())
@@ -32,9 +31,9 @@ public class CommentMapper {
                 .build();
     }
 
-    public List<CommentDto> toDtoList(List<Comment> comments) {
+    public static List<CommentDto> toDtoList(List<Comment> comments) {
         return comments.stream()
-                .map(this::toDto)
+                .map(CommentMapper::toDto)
                 .collect(Collectors.toList());
     }
 }
