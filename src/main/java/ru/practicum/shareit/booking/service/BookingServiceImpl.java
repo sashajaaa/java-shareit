@@ -68,8 +68,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException(String.format("Booking with ID = %d not found.", bookingId)));
         if (!(booking.getBooker().getId().equals(userId) || booking.getItem().getOwnerId().equals(userId))) {
-            throw new OperationAccessException
-                    (String.format("User with ID = %d is not the owner, no access to booking.", userId));
+            throw new OperationAccessException(String.format("User with ID = %d is not the owner, no access to booking.", userId));
         } else {
             return BookingMapper.toBookingDto(booking);
         }
