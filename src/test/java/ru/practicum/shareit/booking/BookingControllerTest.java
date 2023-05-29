@@ -11,9 +11,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.InputBookingDto;
 import ru.practicum.shareit.booking.dto.OutputBookingDto;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +27,9 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -142,7 +146,7 @@ class BookingControllerTest {
 
     @Test
     void findAllByUserIdWhenAllParamsIsValidThenReturnedStatusIsOk() throws Exception {
-        Mockito.when(bookingService.findAllBookingsByUser(any(), anyLong(), anyInt(), anyInt()))
+        Mockito.when(bookingService.findBookingsByUser(any(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(List.of(outputBookingDto));
 
         String result = mvc.perform(get("/bookings/?state=ALL")
@@ -158,7 +162,7 @@ class BookingControllerTest {
 
     @Test
     void findAllByOwnerIdWhenAllParamsIsValidThenReturnedStatusIsOk() throws Exception {
-        Mockito.when(bookingService.findAllBookingsByOwner(any(), anyLong(), anyInt(), anyInt()))
+        Mockito.when(bookingService.findBookingsByOwner(any(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(List.of(outputBookingDto));
 
         String result = mvc.perform(get("/bookings/owner?state=ALL")

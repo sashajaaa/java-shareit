@@ -48,7 +48,9 @@ public class BookingServiceImpl implements BookingService {
         if (itemService.findOwnerId(item.getId()).equals(bookerId)) {
             throw new OperationAccessException("The owner cannot be a booker.");
         }
-        if (item.getAvailable()) {
+        if (!item.getAvailable()) {
+            throw new NotAvailableException(String.format("Item with ID = %d is not available.", item.getId()));
+        } else {
             Booking booking = Booking.builder()
                     .start(bookingDtoShort.getStart())
                     .end(bookingDtoShort.getEnd())
@@ -57,8 +59,6 @@ public class BookingServiceImpl implements BookingService {
                     .status(BookingStatus.WAITING)
                     .build();
             return BookingMapper.toBookingDto(bookingRepository.save(booking));
-        } else {
-            throw new NotAvailableException(String.format("Item with ID = %d is not available.", item.getId()));
         }
     }
 
@@ -67,16 +67,17 @@ public class BookingServiceImpl implements BookingService {
     public OutputBookingDto findBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException(String.format("Booking with ID = %d not found.", bookingId)));
-        if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwnerId().equals(userId)) {
-            return BookingMapper.toBookingDto(booking);
+        if (!(booking.getBooker().getId().equals(userId) || booking.getItem().getOwnerId().equals(userId))) {
+            throw new OperationAccessException
+                    (String.format("User with ID = %d is not the owner, no access to booking.", userId));
         } else {
-            throw new OperationAccessException(String.format("User with ID = %d is not the owner, no access to booking.", userId));
+            return BookingMapper.toBookingDto(booking);
         }
     }
 
     @Override
     @Transactional
-    public List<OutputBookingDto> findAllBookingsByUser(String state, Long userId, Integer from, Integer size) {
+    public List<OutputBookingDto> findBookingsByUser(String state, Long userId, Integer from, Integer size) {
         userService.findUserById(userId);
         Pageable page = PageRequest.of(from / size, size);
         LocalDateTime now = LocalDateTime.now();
@@ -84,29 +85,22 @@ public class BookingServiceImpl implements BookingService {
             case "ALL":
                 return BookingMapper.toBookingDto(bookingRepository.findByBookerIdOrderByStartDesc(userId, page));
             case "CURRENT":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(userId, now, now, page));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBeforeOrderByStartDesc(userId, now, now, page));
             case "PAST":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findByBookerIdAndEndIsBeforeOrderByStartDesc(userId, now, page));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerIdAndEndIsBeforeOrderByStartDesc(userId, now, page));
             case "FUTURE":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findByBookerIdAndStartIsAfterOrderByStartDesc(userId, now, page));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerIdAndStartIsAfterOrderByStartDesc(userId, now, page));
             case "WAITING":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findByBookerIdAndStartIsAfterAndStatusIsOrderByStartDesc(userId, now,
-                                BookingStatus.WAITING, page));
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerIdAndStartIsAfterAndStatusIsOrderByStartDesc(userId, now, BookingStatus.WAITING, page));
             case "REJECTED":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findByBookerIdAndStatusIsOrderByStartDesc(userId, BookingStatus.REJECTED, page));
-
+                return BookingMapper.toBookingDto(bookingRepository.findByBookerIdAndStatusIsOrderByStartDesc(userId, BookingStatus.REJECTED, page));
         }
         throw new BadRequestException(String.format("Unknown state: %s", state));
     }
 
     @Override
     @Transactional
-    public List<OutputBookingDto> findAllBookingsByOwner(String state, Long ownerId, Integer from, Integer size) {
+    public List<OutputBookingDto> findBookingsByOwner(String state, Long ownerId, Integer from, Integer size) {
         userService.findUserById(ownerId);
         Pageable page = PageRequest.of(from / size, size);
         LocalDateTime now = LocalDateTime.now();
@@ -120,11 +114,9 @@ public class BookingServiceImpl implements BookingService {
             case "FUTURE":
                 return BookingMapper.toBookingDto(bookingRepository.findFutureBookingsOwner(ownerId, now, page));
             case "WAITING":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findWaitingBookingsOwner(ownerId, now, BookingStatus.WAITING, page));
+                return BookingMapper.toBookingDto(bookingRepository.findWaitingBookingsOwner(ownerId, now, BookingStatus.WAITING, page));
             case "REJECTED":
-                return BookingMapper.toBookingDto(bookingRepository
-                        .findRejectedBookingsOwner(ownerId, BookingStatus.REJECTED, page));
+                return BookingMapper.toBookingDto(bookingRepository.findRejectedBookingsOwner(ownerId, BookingStatus.REJECTED, page));
         }
         throw new BadRequestException(String.format("Unknown state: %s", state));
     }

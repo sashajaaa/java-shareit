@@ -59,14 +59,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto findItemById(Long itemId, Long userId) {
-        ItemDto result;
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(String.format("Item with ID = %d not found.", itemId)));
-        result = ItemMapper.toItemDto(item);
+        ItemDto result = ItemMapper.toItemDto(item);
         if (Objects.equals(item.getOwnerId(), userId)) {
             updateBookings(result);
         }
-        List<Comment> comments = commentRepository.findAllByItemId(result.getId());
+        List<Comment> comments = commentRepository.findByItemId(result.getId());
         result.setComments(CommentMapper.toDtoList(comments));
         return result;
     }
@@ -80,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
         List<ItemDto> list = new ArrayList<>();
         item.stream().map(this::updateBookings).forEach(i -> {
-            CommentMapper.toDtoList(commentRepository.findAllByItemId(i.getId()));
+            CommentMapper.toDtoList(commentRepository.findByItemId(i.getId()));
             list.add(i);
         });
         return list;
@@ -131,7 +130,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public void deleteById(Long itemId) {
+    public void delete(Long itemId) {
         itemRepository.deleteById(itemId);
     }
 
@@ -164,14 +163,14 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> bookings = bookingRepository
                 .findByItemIdAndBookerIdAndStatusIsAndEndIsBefore(itemId, userId, BookingStatus.APPROVED, LocalDateTime.now());
         log.info(bookings.toString());
-        if (!bookings.isEmpty() && bookings.get(0).getStart().isBefore(LocalDateTime.now())) {
+        if (!(!bookings.isEmpty() && bookings.get(0).getStart().isBefore(LocalDateTime.now()))) {
+            throw new NotAvailableException(String.format("Booking for user with ID = %d and item with ID = %d not found.", userId, itemId));
+        } else {
             Comment comment = CommentMapper.toComment(commentDto);
             comment.setItem(item);
             comment.setAuthor(user);
             comment.setCreated(LocalDateTime.now());
             return CommentMapper.toDto(commentRepository.save(comment));
-        } else {
-            throw new NotAvailableException(String.format("Booking for user with ID = %d and item with ID = %d not found.", userId, itemId));
         }
     }
 }

@@ -469,3 +469,22 @@ refactor:
 -переработан класс UserService;  
 -добавлен интерфейс UserService;  
 -переработан класс UserServiceImpl.  
+
+#### Commit №15.2:  
+refactor:  
+-переработан файл pom.xml;  
+-переработан класс BookingController;  
+-переработан интерфейс BookingService;  
+-переработан класс BookingServiceImpl;  
+-переработан интерфейс CommentRepository;  
+-переработан класс ItemController;
+-переработан интерфейс ItemService;  
+-переработан класс ItemServiceImpl;  
+-переработан класс BookingControllerTest;  
+-переработан класс BookingServiceTest;  
+-переработан класс ItemControllerTest;  
+-переработан класс ItemServiceTest;  
+-переработан класс ItemRequestControllerTest;  
+-переработан класс ItemRequestBookingServiceTest;  
+-переработан класс UserControllerTest;  
+-переработан класс UserServiceTest;  

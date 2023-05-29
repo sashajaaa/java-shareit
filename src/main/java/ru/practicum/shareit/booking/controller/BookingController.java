@@ -49,7 +49,7 @@ public class BookingController {
                                                @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/bookings' to get all booking of user with ID = {}", userId);
-        return bookingService.findAllBookingsByUser(state, userId, from, size);
+        return bookingService.findBookingsByUser(state, userId, from, size);
     }
 
     @GetMapping("/owner")
@@ -58,7 +58,7 @@ public class BookingController {
                                                 @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                 @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/bookings' to get all booking of owner with ID = {}", userId);
-        return bookingService.findAllBookingsByOwner(state, userId, from, size);
+        return bookingService.findBookingsByOwner(state, userId, from, size);
     }
 
     @PatchMapping("/{bookingId}")
