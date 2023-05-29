@@ -51,13 +51,8 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new NotAvailableException(String.format("Item with ID = %d is not available.", item.getId()));
         } else {
-            Booking booking = Booking.builder()
-                    .start(bookingDtoShort.getStart())
-                    .end(bookingDtoShort.getEnd())
-                    .item(item)
-                    .booker(booker)
-                    .status(BookingStatus.WAITING)
-                    .build();
+            Booking booking = Booking.builder().start(bookingDtoShort.getStart()).end(bookingDtoShort.getEnd())
+                    .item(item).booker(booker).status(BookingStatus.WAITING).build();
             return BookingMapper.toBookingDto(bookingRepository.save(booking));
         }
     }
@@ -125,8 +120,7 @@ public class BookingServiceImpl implements BookingService {
     public OutputBookingDto approve(long bookingId, long userId, Boolean approve) {
         OutputBookingDto booking = findBookingById(bookingId, userId);
         Long ownerId = itemService.findOwnerId(booking.getItem().getId());
-        if (ownerId.equals(userId)
-                && booking.getStatus().equals(BookingStatus.APPROVED)) {
+        if (ownerId.equals(userId) && booking.getStatus().equals(BookingStatus.APPROVED)) {
             throw new AlreadyExistsException("The booking decision has already been made.");
         }
         if (!ownerId.equals(userId)) {

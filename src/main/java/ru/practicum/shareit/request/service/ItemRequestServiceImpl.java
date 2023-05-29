@@ -41,7 +41,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public ItemRequestDto findById(Long userId, Long requestId) {
         ItemRequest itemRequest = requestRepository.findById(requestId)
-                .orElseThrow(() -> new NotFoundException(String.format("Request with id = %d not found.", requestId)));
+                .orElseThrow(() -> new NotFoundException(String.format("Request with ID = %d not found.", requestId)));
         itemRequest.setItems(itemRepository.findAllByItemRequest(itemRequest));
         ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
         itemRequestDto.setRequester(userService.findUserById(userId));
