@@ -17,6 +17,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,9 +43,11 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> findAll(@RequestHeader(OWNER_ID_HEADER) Long userId) {
+    public List<ItemDto> findAll(@RequestHeader(OWNER_ID_HEADER) Long userId,
+                                 @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                 @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/items' to get all items of owner with ID = {}", userId);
-        return itemService.findAllUsersItems(userId);
+        return itemService.findUserItems(userId, from, size);
     }
 
     @PatchMapping("/{itemId}")
@@ -56,13 +60,15 @@ public class ItemController {
     @DeleteMapping("/{itemId}")
     public void delete(@PathVariable Long itemId) {
         log.info("Received a DELETE-request to the endpoint: '/items' to delete item with ID = {}", itemId);
-        itemService.deleteById(itemId);
+        itemService.delete(itemId);
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> search(@RequestParam String text) {
+    public Collection<ItemDto> search(@RequestParam String text,
+                                      @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                      @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/items/search' to search item with text = {}", text);
-        return itemService.search(text);
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

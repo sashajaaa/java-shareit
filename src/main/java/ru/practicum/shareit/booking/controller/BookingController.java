@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,17 +12,20 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.booking.dto.OutputBookingDto;
 import ru.practicum.shareit.booking.dto.InputBookingDto;
+import ru.practicum.shareit.booking.dto.OutputBookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/bookings")
+@RequestMapping("/bookings")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class BookingController {
     private static final String OWNER_ID_HEADER = "X-Sharer-User-Id";
     private final BookingService bookingService;
@@ -40,17 +44,21 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<OutputBookingDto> findAllByUserId(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                                  @RequestParam(defaultValue = "ALL") String state) {
+    public List<OutputBookingDto> findByUserId(@RequestHeader(OWNER_ID_HEADER) Long userId,
+                                               @RequestParam(defaultValue = "ALL") String state,
+                                               @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                               @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/bookings' to get all booking of user with ID = {}", userId);
-        return bookingService.findAllBookingsByUser(state, userId);
+        return bookingService.findBookingsByUser(state, userId, from, size);
     }
 
     @GetMapping("/owner")
-    public List<OutputBookingDto> findAllByOwnerId(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                                   @RequestParam(defaultValue = "ALL") String state) {
+    public List<OutputBookingDto> findByOwnerId(@RequestHeader(OWNER_ID_HEADER) Long userId,
+                                                @RequestParam(defaultValue = "ALL") String state,
+                                                @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/bookings' to get all booking of owner with ID = {}", userId);
-        return bookingService.findAllBookingsByOwner(state, userId);
+        return bookingService.findBookingsByOwner(state, userId, from, size);
     }
 
     @PatchMapping("/{bookingId}")
