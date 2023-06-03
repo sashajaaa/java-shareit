@@ -46,4 +46,3 @@ public class ItemRequest {
     @Transient
     private List<Item> items;
 }
-
