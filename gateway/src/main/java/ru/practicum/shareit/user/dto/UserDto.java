@@ -5,9 +5,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.shareit.user.Marker;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -17,10 +19,12 @@ import javax.validation.constraints.NotBlank;
 public class UserDto {
     private Long id;
 
-    @NotBlank
+    @NotBlank(groups = Marker.Create.class)
+    @Size(min = 1, max = 64)
     private String name;
 
-    @NotBlank
+    @NotBlank(groups = Marker.Create.class)
     @Email
+    @Size(min = 1, max = 64)
     private String email;
 }
