@@ -16,9 +16,6 @@ import ru.practicum.shareit.booking.dto.InputBookingDto;
 import ru.practicum.shareit.booking.dto.OutputBookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -32,7 +29,7 @@ public class BookingController {
 
     @PostMapping
     public OutputBookingDto create(@RequestHeader(OWNER_ID_HEADER) long userId,
-                                   @Valid @RequestBody InputBookingDto bookingDtoShort) {
+                                   @RequestBody InputBookingDto bookingDtoShort) {
         log.info("Received a POST-request to the endpoint: '/bookings' to add a booking by the user with ID = {}", userId);
         return bookingService.create(bookingDtoShort, userId);
     }
@@ -46,8 +43,8 @@ public class BookingController {
     @GetMapping
     public List<OutputBookingDto> findByUserId(@RequestHeader(OWNER_ID_HEADER) Long userId,
                                                @RequestParam(defaultValue = "ALL") String state,
-                                               @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                               @Positive @RequestParam(defaultValue = "10") Integer size) {
+                                               @RequestParam(defaultValue = "0") Integer from,
+                                               @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/bookings' to get all booking of user with ID = {}", userId);
         return bookingService.findBookingsByUser(state, userId, from, size);
     }
@@ -55,8 +52,8 @@ public class BookingController {
     @GetMapping("/owner")
     public List<OutputBookingDto> findByOwnerId(@RequestHeader(OWNER_ID_HEADER) Long userId,
                                                 @RequestParam(defaultValue = "ALL") String state,
-                                                @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                                @Positive @RequestParam(defaultValue = "10") Integer size) {
+                                                @RequestParam(defaultValue = "0") Integer from,
+                                                @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/bookings' to get all booking of owner with ID = {}", userId);
         return bookingService.findBookingsByOwner(state, userId, from, size);
     }

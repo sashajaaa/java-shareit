@@ -9,15 +9,19 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.validate.StartBeforeEndDateValid;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@StartBeforeEndDateValid
 public class BookItemRequestDto {
+
+    @NotNull
     private long itemId;
 
     @NotNull
-    @FutureOrPresent
+    @Future
     private LocalDateTime start;
 
     @NotNull

@@ -589,4 +589,31 @@ Maven-командой. Реализовать подобный механизм
 ### Commits:  
 #### Commit №16.1:  
 feat:  
--добавлен Docker.
+-добавлен Docker.  
+
+#### Commit №16.2:  
+refactor:  
+-переработан родительский файл pom.xml;  
+-переработан файл gateway/pom.xml;  
+-переработан класс gateway/BookingItemRequestDto;  
+-добавлен класс gateway/CheckDateValidator;  
+-добавлен интерфейс gateway/StartBeforeEndDateValid;  
+-переработан класс gateway/ErrorHandler;  
+-переработан класс gateway/CommentDto;  
+-переработан класс gateway/ItemDto;  
+-переработан класс gateway/ItemController;  
+-переработан класс gateway/ItemRequestDto;  
+-добавлен интерфейс gateway/Marker;  
+-переработан класс gateway/UserController;  
+-переработан файл server/pom.xml;  
+-переработан файл server/schema.sql;  
+-переработан класс server/BookingController;  
+-переработан класс server/InputBookingDto;  
+-переработан класс server/ErrorHandler;  
+-переработан класс server/CommentDto;  
+-переработан класс server/ItemController;  
+-переработан класс server/ItemDto;  
+-переработан класс server/ItemRequestController;  
+-переработан класс server/ItemRequestDto;  
+-переработан класс server/UserController;  
+-переработан класс server/UserDto.  

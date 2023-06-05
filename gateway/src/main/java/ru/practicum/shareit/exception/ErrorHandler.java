@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
@@ -18,30 +20,42 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(final BadRequestException e) {
+        log.warn("400 {}", e.getMessage());
         return ErrorResponse.builder().error(e.getMessage()).build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(ValidationException e) {
+        log.warn("400 {}", e.getMessage());
         return ErrorResponse.builder().error(e.getMessage()).build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationException(final ConstraintViolationException e) {
+        log.warn("400 {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUnknownDataException(MethodArgumentNotValidException e) {
+        log.warn("400 {}", e.getMessage());
         return ErrorResponse.builder().error(e.getMessage()).build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUnknownDataException(MissingRequestValueException e) {
+        log.warn("400 {}", e.getMessage());
         return ErrorResponse.builder().error(e.getMessage()).build();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(Throwable throwable) {
+        log.error("Unknown error", throwable);
         return ErrorResponse.builder().error(throwable.getMessage()).build();
     }
 

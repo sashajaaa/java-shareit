@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,9 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping(path = "/items")
@@ -46,16 +50,19 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<Object> getAllUsersItems(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                                   @RequestParam(value = "from", defaultValue = "0") Integer from,
-                                                   @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                                   @PositiveOrZero @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                                   @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
         return itemClient.getAllUsersItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchItems(@RequestHeader(OWNER_ID_HEADER) Long userId,
                                               @RequestParam String text,
-                                              @RequestParam(value = "from", defaultValue = "0") Integer from,
-                                              @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                              @PositiveOrZero @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                              @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        if (text.isBlank()) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        }
         return itemClient.searchItems(userId, text, from, size);
     }
 

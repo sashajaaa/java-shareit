@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotBlank;
 public class ItemRequestDto {
     private Long id;
 
+    @Size(min = 1, max = 64)
     @NotBlank
     private String description;
 }

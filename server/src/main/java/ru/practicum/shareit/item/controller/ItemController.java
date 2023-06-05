@@ -16,9 +16,6 @@ import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,7 +28,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto create(@RequestHeader(OWNER_ID_HEADER) Long userId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDto create(@RequestHeader(OWNER_ID_HEADER) Long userId, @RequestBody ItemDto itemDto) {
         log.info("Received a POST-request to the endpoint: '/items' to add an item by the owner with ID = {}", userId);
         return itemService.create(userId, itemDto);
     }
@@ -44,8 +41,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> findAll(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                 @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                 @Positive @RequestParam(defaultValue = "10") Integer size) {
+                                 @RequestParam(defaultValue = "0") Integer from,
+                                 @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/items' to get all items of owner with ID = {}", userId);
         return itemService.findUserItems(userId, from, size);
     }
@@ -65,8 +62,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public Collection<ItemDto> search(@RequestParam String text,
-                                      @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                      @Positive @RequestParam(defaultValue = "10") Integer size) {
+                                      @RequestParam(defaultValue = "0") Integer from,
+                                      @RequestParam(defaultValue = "10") Integer size) {
         log.info("Received a GET-request to the endpoint: '/items/search' to search item with text = {}", text);
         return itemService.search(text, from, size);
     }
@@ -74,7 +71,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader(OWNER_ID_HEADER) Long userId,
                                     @PathVariable Long itemId,
-                                    @Valid @RequestBody CommentDto commentDto) {
+                                    @RequestBody CommentDto commentDto) {
         log.info("Received a POST-request to the endpoint: '/items/{itemId}/comment' to add a comment");
         return itemService.addComment(itemId, userId, commentDto);
     }

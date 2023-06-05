@@ -23,6 +23,7 @@ public class UserController {
     private final UserClient userClient;
 
     @PostMapping
+    @Validated({Marker.Create.class})
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
         return userClient.createUser(userDto);
     }
@@ -38,7 +39,8 @@ public class UserController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<Object> updateUser(@RequestBody UserDto userDto,
+    @Validated({Marker.Update.class})
+    public ResponseEntity<Object> updateUser(@Valid @RequestBody UserDto userDto,
                                              @PathVariable("id") Long userId) {
         return userClient.updateUser(userDto, userId);
     }
