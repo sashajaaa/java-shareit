@@ -623,5 +623,7 @@ refactor:
 -переработан класс gateway/BookingItemRequestDto;  
 -переработан класс gateway/ItemDto;  
 -переработан класс gateway/ItemController;  
+-переработан класс gateway/ItemRequestDto;  
+-переработан класс gateway/ItemRequestController;  
 -переработан класс gateway/UserDto;  
 -переработан класс gateway/UserController.

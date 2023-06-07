@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.shareit.user.Marker;
+import ru.practicum.shareit.Marker;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

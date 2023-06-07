@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.practicum.shareit.Marker;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -27,7 +27,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<Object> createRequest(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                                @RequestBody @Valid ItemRequestDto itemRequestDto) {
+                                                @Validated({Marker.Create.class}) @RequestBody ItemRequestDto itemRequestDto) {
         return itemRequestClient.createRequest(userId, itemRequestDto);
     }
 

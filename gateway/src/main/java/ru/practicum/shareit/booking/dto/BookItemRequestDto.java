@@ -2,12 +2,12 @@ package ru.practicum.shareit.booking.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.FutureOrPresent;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.validate.StartBeforeEndDateValid;
+
+import javax.validation.constraints.FutureOrPresent;
 
 @Getter
 @NoArgsConstructor
