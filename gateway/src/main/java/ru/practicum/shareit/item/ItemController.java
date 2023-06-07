@@ -24,6 +24,7 @@ import java.util.Collections;
 @Controller
 @RequestMapping(path = "/items")
 @RequiredArgsConstructor
+@Validated
 public class ItemController {
     private static final String OWNER_ID_HEADER = "X-Sharer-User-Id";
     private final ItemClient itemClient;
