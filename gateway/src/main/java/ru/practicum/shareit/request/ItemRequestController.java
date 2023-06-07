@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.user.Marker;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -21,13 +20,14 @@ import javax.validation.constraints.PositiveOrZero;
 @Controller
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
+@Validated
 public class ItemRequestController {
     private static final String OWNER_ID_HEADER = "X-Sharer-User-Id";
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping
     public ResponseEntity<Object> createRequest(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                                @Validated({Marker.Create.class}) @RequestBody @Valid ItemRequestDto itemRequestDto) {
+                                                @RequestBody @Valid ItemRequestDto itemRequestDto) {
         return itemRequestClient.createRequest(userId, itemRequestDto);
     }
 
