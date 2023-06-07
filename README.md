@@ -621,6 +621,7 @@ refactor:
 #### Commit №16.3:
 refactor:  
 -переработан класс gateway/BookingItemRequestDto;  
+-переработан класс gateway/ItemDto;  
 -переработан класс gateway/ItemController;  
 -переработан класс gateway/UserDto;  
 -переработан класс gateway/UserController.  

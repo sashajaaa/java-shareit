@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.Marker;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -23,20 +24,19 @@ import java.util.Collections;
 @Controller
 @RequestMapping(path = "/items")
 @RequiredArgsConstructor
-@Validated
 public class ItemController {
     private static final String OWNER_ID_HEADER = "X-Sharer-User-Id";
     private final ItemClient itemClient;
 
     @PostMapping
     public ResponseEntity<Object> createItem(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                             @Valid @RequestBody ItemDto itemDto) {
+                                             @Validated({Marker.Create.class}) @RequestBody ItemDto itemDto) {
         return itemClient.createItem(userId, itemDto);
     }
 
     @PatchMapping("{itemId}")
     public ResponseEntity<Object> updateItem(@RequestHeader(OWNER_ID_HEADER) Long userId,
-                                             @RequestBody ItemDto itemDto,
+                                             @Validated({Marker.Update.class}) @RequestBody ItemDto itemDto,
                                              @PathVariable Long itemId) {
         return itemClient.updateItem(itemDto, itemId, userId);
     }

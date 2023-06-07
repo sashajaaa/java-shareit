@@ -16,12 +16,11 @@ import ru.practicum.shareit.user.dto.UserDto;
 @Controller
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
-@Validated
 public class UserController {
     private final UserClient userClient;
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@Validated({Marker.Update.class}) @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> createUser(@Validated({Marker.Create.class}) @RequestBody UserDto userDto) {
         return userClient.createUser(userDto);
     }
 
