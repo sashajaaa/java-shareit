@@ -20,11 +20,11 @@ public class UserDto {
     private Long id;
 
     @NotBlank(groups = Marker.Create.class)
-    @Size(min = 1, max = 64)
+    @Size(min = 1, max = 64, groups = {Marker.Create.class, Marker.Update.class})
     private String name;
 
     @NotBlank(groups = Marker.Create.class)
-    @Email
-    @Size(min = 1, max = 64)
+    @Email(groups = {Marker.Create.class, Marker.Update.class})
+    @Size(min = 1, max = 64, groups = {Marker.Create.class, Marker.Update.class})
     private String email;
 }

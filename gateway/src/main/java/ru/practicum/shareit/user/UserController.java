@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.Valid;
-
 @Controller
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
@@ -23,8 +21,7 @@ public class UserController {
     private final UserClient userClient;
 
     @PostMapping
-    @Validated({Marker.Create.class})
-    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> createUser(@Validated({Marker.Update.class}) @RequestBody UserDto userDto) {
         return userClient.createUser(userDto);
     }
 
@@ -39,8 +36,7 @@ public class UserController {
     }
 
     @PatchMapping("{id}")
-    @Validated({Marker.Update.class})
-    public ResponseEntity<Object> updateUser(@Valid @RequestBody UserDto userDto,
+    public ResponseEntity<Object> updateUser(@Validated({Marker.Update.class}) @RequestBody UserDto userDto,
                                              @PathVariable("id") Long userId) {
         return userClient.updateUser(userDto, userId);
     }
